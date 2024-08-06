@@ -1,6 +1,7 @@
+import shutil
 import pdfkit
 import pandas as pd
-from flask import Flask, render_template
+from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for
 import os
 from datetime import datetime
 
@@ -57,9 +58,29 @@ def generate_pdf(name):
     except Exception as e:
         print(f"PDF generation failed: {e}")
 
-# @app.route('/download/<filename>')
-# def download_file(filename):
-#     return send_from_directory('ReportCards', filename)
+@app.route("/upload", methods=["POST"])
+def upload():
+    global file_path
+    if 'file' not in request.files:
+        return redirect(request.url)
+    file = request.files["file"]
+    if file.filename == '':
+        return redirect(request.url)
+    if file:
+        file.save(f"Uploads/{file.filename}")   
+        file_path = f"Uploads/{file.filename}"
+    return redirect(url_for('home'))
+        
+@app.route('/download')
+def download_file():
+    if not os.path.exists("ReportCards"):
+            abort(404, description="Directory not found")
+
+        # Compress the directory into a ZIP file
+    shutil.make_archive('reportcards', 'zip', "ReportCards")
+        
+        # Serve the ZIP file
+    return send_from_directory(os.getcwd(), 'reportcards.zip', as_attachment=True)
 
 
 def convert_html_to_pdf():
@@ -72,14 +93,3 @@ if __name__ == '__main__':
         os.makedirs('ReportCards')
     convert_html_to_pdf()
     app.run(debug=True)
-
-
-# HTML content
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5002)
-    if not os.path.exists('ReportCards'):
-        os.makedirs('ReportCards')
-    generate_pdf()
