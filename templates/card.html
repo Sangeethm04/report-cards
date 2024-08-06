@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        .report-card {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .report-card, .report-card th, .report-card td {
+            border: 1px solid black;
+        }
+        .report-card th, .report-card td {
+            padding: 8px;
+            text-align: center;
+        }
+        .comments-cell {
+            text-align: left;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .teacher-signature {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .teacher-signature div {
+            text-align: center;
+        }
+        .slides {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
+        <p>508 Elizabeth Avenue, Somerset, NJ</p>
+        <p>Year End Report Card: CCD Grade 12</p>
+        <p>School Year: 2024-2025</p>
+    </div>
+
+    <div class="content">
+        <p>Student's Name: <strong>{{ data["name"] }}</strong></p>
+
+        <table class="report-card">
+            <thead>
+                <tr>
+                    <th>Items</th>
+                    <th>Mid Term Score</th>
+                    <th>Final Term Score</th>
+                    <th>Student's Total Score</th>
+                    <th rowspan="6" class="comments-cell">Teacher's Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="sides">Mid Term Exam</td>
+                    <td>{{ data["mid_term_exam"] }}</td>
+                    <td>{{ data["exam_final"] }}</td>
+                    <td>{{ data["exam_total"] }}</td>
+                    <td rowspan="6" class="comments-cell">{{ data["teacher_comments"] }}</td>
+                </tr>
+                <tr>
+                    <td class="sides">Behavior<br><div style="font-size:xx-small">(This includes CCD<br>
+                        attendance, punctuality,<br>
+                        sacramental life, prayer life,<br>
+                        involvement in the CML and<br>
+                        parish activities, volunteer<br>
+                        work and readiness to help<br>
+                        others)</div></td>
+                    <td>{{ data["behavior_mid"] }}</td>
+                    <td>{{ data["behavior_final"] }}</td>
+                    <td>{{ data["behavior_total"] }}</td>
+                </tr>
+                <tr>
+                    <td class="sides">Quiz<br><div style="font-size:xx-small">(This includes Bible Quizzes<br>
+                        and/or Chapter Quizzes<br>
+                        conducted in class)</div> </td>
+                    <td>{{ data["quiz_mid"] }}</td>
+                    <td>{{ data["quiz_final"] }}</td>
+                    <td>{{ data["quiz_total"] }}</td>
+                </tr>
+                <tr>
+                    <td class="sides">Homework</td>
+                    <td>{{ data["homework_mid"] }}</td>
+                    <td>{{ data["homework_final"] }}</td>
+                    <td>{{ data["homework_total"] }}</td>
+                </tr>
+                <tr>
+                    <td class="sides">Student Diary</td>
+                    <td>{{ data["diary_mid"] }}</td>
+                    <td>{{ data["diary_final"] }}</td>
+                    <td>{{ data["diary_total"] }}</td>
+                </tr>
+
+            </tbody>
+        </table>
+
+        <p>Final Term Grade: <strong>{{ data["final_grade"] }}%</strong></p>
+
+        <div class="footer">
+            <p>Dear Parents:</p>
+            <p>The purpose of this report card is to provide awareness about your child's progress in our faith formation classes. You may discuss your child's progress in more detail with the teachers during the Parent-Teacher one on one conference as needed.</p>
+        </div>
+
+        <div class="teacher-signature">
+            <div>
+                <p>{{ data["teacher1_name"] }}</p>
+                <p>Teacher Name</p>
+            </div>
+            <div>
+                <p>{{ data["teacher2_name"] }}</p>
+                <p>Teacher Name</p>
+            </div>
+        </div>
+
+        <p>Date: <strong>{{ data["date"] }}</strong></p>
+    </div>
+</body>
+</html>
