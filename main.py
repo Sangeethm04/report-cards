@@ -19,10 +19,20 @@ formatted_date = now.strftime("%m-%d-%y")
 def home():
     return render_template("index.html")
 
-@app.route('/generate_pdf')
+def convert_html_to_pdf():
+    for name in df["First Name"]:
+        with app.test_request_context():
+            generate_pdf(name)
+
+@app.route('/generate_pdf/<name>')
 def generate_pdf(name):
-    # Find the student data by name
-    student_data = next(item for item in students_data if item['First Name'] == name)
+    # Find the student data by namet
+    try:
+        student_data = next(item for item in students_data if item['First Name'] == name)
+    except StopIteration:
+        abort(404, description="Student not found")
+
+
 
     # Extract relevant data from the student_data
     data = {
@@ -60,7 +70,7 @@ def generate_pdf(name):
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    global file_path
+    global file_path,df, students_data
     if 'file' not in request.files:
         return redirect(request.url)
     file = request.files["file"]
@@ -69,6 +79,9 @@ def upload():
     if file:
         file.save(f"Uploads/{file.filename}")   
         file_path = f"Uploads/{file.filename}"
+        df = pd.read_csv(file_path)
+        students_data = df.to_dict(orient='records')  # Update the global students_data
+    convert_html_to_pdf()
     return redirect(url_for('home'))
         
 @app.route('/download')
@@ -83,13 +96,6 @@ def download_file():
     return send_from_directory(os.getcwd(), 'reportcards.zip', as_attachment=True)
 
 
-def convert_html_to_pdf():
-    for name in df["First Name"]:
-        with app.test_request_context():
-            generate_pdf(name)
 
 if __name__ == '__main__':
-    if not os.path.exists('ReportCards'):
-        os.makedirs('ReportCards')
-    convert_html_to_pdf()
     app.run(debug=True)
