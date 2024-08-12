@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        .report-card {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .report-card, .report-card th, .report-card td {
+            border: 1px solid black;
+        }
+        .report-card th, .report-card td {
+            padding: 8px;
+            text-align: center;
+        }
+        .report-card .score-column {
+            width: 30%; /* Increase the width of the score column */
+        }
+        .report-card .comments-cell {
+            width: 30%; /* Reduce the width of the comments cell */
+            text-align: left;
+            vertical-align: top;
+        }
+        .report-card .title-column {
+            width: 30%; /* Adjust the size of the title column */
+        }
+        .footer p {
+            margin: 5px 0 5 5;
+        }
+        .teacher-signature {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .teacher-signature div {
+            display: inline-block;
+            width: 45%; /* Adjust width to control spacing */
+            text-align: center;
+            vertical-align: top;
+        }
+        .teacher-signature div:not(:last-child) {
+            margin-right: 5%; /* Add spacing between the names */
+        }
+        .final-grade {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f9f9f9; /* Optional: Add a background color */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
+        <p>508 Elizabeth Avenue, Somerset, NJ</p>
+        <p>Year End Report Card: CCD Grade 12</p>
+        <p>School Year: 2024-2025</p>
+    </div>
+
+    <div class="content">
+        <h3>Student's Name: <strong>{{ data["name"] }}</strong></h3>
+
+        <table class="report-card">
+            <thead>
+                <tr>
+                    <th class="title-column">Items</th>
+                    <th class="score-column">Mid Term Score</th>
+                    <th class="comments-cell">Teacher's Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="title-column">Mid Term Exam</td>
+                    <td class="score-column">{{ data["mid_term_exam"] }}</td>
+                    <td class="comments-cell" rowspan="6">{{ data["teacher_comments"] }}</td>
+                </tr>
+                <tr>
+                    <td class="title-column">Behavior<br><div style="font-size:xx-small">(This includes CCD<br>
+                        attendance, punctuality,<br>
+                        sacramental life, prayer life,<br>
+                        involvement in the CML and<br>
+                        parish activities, volunteer<br>
+                        work and readiness to help<br>
+                        others)</div></td>
+                    <td class="score-column">{{ data["behavior_mid"] }}</td>
+                </tr>
+                <tr>
+                    <td class="title-column">Quiz<br><div style="font-size:xx-small">(This includes Bible Quizzes<br>
+                        and/or Chapter Quizzes<br>
+                        conducted in class)</div> </td>
+                    <td class="score-column">{{ data["quiz_mid"] }}</td>
+                </tr>
+                <tr>
+                    <td class="title-column">Homework</td>
+                    <td class="score-column">{{ data["homework_mid"] }}</td>
+                </tr>
+                <tr>
+                    <td class="title-column">Student Diary</td>
+                    <td class="score-column">{{ data["diary_mid"] }}</td>
+                </tr>
+                <tr class="final-grade">
+                    <td>Mid Term Grade: </td> 
+                    <td class="score-column" colspan="1"><strong>{{ data["final_grade"] }}%</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p><strong>Dear Parents:</strong></p>
+            <p>The purpose of this report card is to provide awareness about your child's progress in our faith formation classes. You may discuss your child's progress in more detail with the teachers during the Parent-Teacher one on one conference as needed.</p>
+        </div>
+
+        <div class="teacher-signature">
+            <div>
+                <p>{{ data["teacher1_name"] }}</p>
+                <p>Teacher Name</p>
+            </div>
+            <div>
+                <p>{{ data["teacher2_name"] }}</p>
+                <p>Teacher Name</p>
+            </div>
+        </div>
+
+        <p style="text-align: center;">Date: <strong>{{ data["date"] }}</strong></p>
+    </div>
+</body>
+</html>

@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-file_path = 'Report Card - Sheet1.csv'
+file_path = 'Uploads/Mid-Data.csv'
 df = pd.read_csv(file_path)
 
 # Convert DataFrame rows to dictionaries for easier access
@@ -38,20 +38,20 @@ def generate_pdf(name):
     data = {
         "name": f"{student_data['First Name']} {student_data['Last Name']}",
         "mid_term_exam": student_data['Mid-Term Exam'],
-        "exam_final": student_data['Final Exam'],
-        "exam_total": student_data['Exam Total'],
+        # "exam_final": student_data['Final Exam'],
+        # "exam_total": student_data['Exam Total'],
         "behavior_mid": student_data['Behavior Mid'],
-        "behavior_final": student_data['Behavior Final'],
-        "behavior_total": student_data['Behavior Total'],
+        # "behavior_final": student_data['Behavior Final'],
+        # "behavior_total": student_data['Behavior Total'],
         "quiz_mid": student_data['Quiz Mid'],
-        "quiz_final": student_data['Quiz Final'],
-        "quiz_total": student_data['Quiz Total'],
+        # "quiz_final": student_data['Quiz Final'],
+        # "quiz_total": student_data['Quiz Total'],
         "homework_mid": student_data['Homework Mid'],
-        "homework_final": student_data['Homework Final'],
-        "homework_total": student_data['Homework Total'],
+        # "homework_final": student_data['Homework Final'],
+        # "homework_total": student_data['Homework Total'],
         "diary_mid": student_data['Diary Mid'],
-        "diary_final": student_data['Diary Final'],
-        "diary_total": student_data['Diary Total'],
+        # "diary_final": student_data['Diary Final'],
+        # "diary_total": student_data['Diary Total'],
         "final_grade": student_data['Final Grade'],
         "teacher_comments": student_data['Teacher Comments'],
         "teacher1_name": "sangeeth",
@@ -62,7 +62,7 @@ def generate_pdf(name):
     # PDF path to save
     pdf_path = f'ReportCards/{name} Report Card.pdf'
     try:
-        rendered = render_template("card.html", data=data)
+        rendered = render_template("midCard.html", data=data)
         pdfkit.from_string(rendered, pdf_path)
         print(f"PDF generated and saved at {pdf_path}")
     except Exception as e:

@@ -21,6 +21,15 @@
             margin: 5px 0;
             font-size: 18px;
         }
+        .header .images {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+        }
+        .header .images img {
+            width: 80px; /* Adjust the size of the images as needed */
+        }
         .report-card {
             width: 100%;
             border-collapse: collapse;
@@ -32,11 +41,16 @@
             padding: 8px;
             text-align: center;
         }
-        .comments-cell {
+        .report-card .score-column {
+            width: 10%; /* Make score columns smaller */
+        }
+        .report-card .comments-cell {
+            width: 50%; /* Make the comments cell bigger */
             text-align: left;
+            vertical-align: top;
         }
         .footer p {
-            margin: 5px 0;
+            margin: 5px 10px;
         }
         .teacher-signature {
             margin-top: 40px;
@@ -46,30 +60,43 @@
         .teacher-signature div {
             text-align: center;
         }
-        .slides {
-            text-align: left;
+        .final-grade {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f9f9f9; /* Optional: Add a background color */
         }
+
+        .sides {
+            width: 25%; /* Increase the size of the title column */
+        }
+
+   
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
+        <div class="images">
+            <img src="../Assets/syromalabarcross.png" alt="Left Image"> <!-- Replace with the actual path to your left image -->
+            <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
+            <img src="../Assets/syromalabarcross.png" alt="Right Image"> <!-- Replace with the actual path to your right image -->
+        </div>
         <p>508 Elizabeth Avenue, Somerset, NJ</p>
         <p>Year End Report Card: CCD Grade 12</p>
         <p>School Year: 2024-2025</p>
     </div>
 
     <div class="content">
-        <p>Student's Name: <strong>{{ data["name"] }}</strong></p>
+        <h3>Student's Name: <strong>{{ data["name"] }}</strong></h3>
 
         <table class="report-card">
             <thead>
                 <tr>
                     <th>Items</th>
-                    <th>Mid Term Score</th>
-                    <th>Final Term Score</th>
-                    <th>Student's Total Score</th>
-                    <th rowspan="6" class="comments-cell">Teacher's Comments</th>
+                    <th class="score-column">Mid Term Score</th>
+                    <th class="score-column">Final Term Score</th>
+                    <th class="score-column">Student's Total Score</th>
+                    <th class="comments-cell">Teacher's Comments</th>                
                 </tr>
             </thead>
             <tbody>
@@ -112,11 +139,11 @@
                     <td>{{ data["diary_final"] }}</td>
                     <td>{{ data["diary_total"] }}</td>
                 </tr>
-
+                <tr class="final-grade">
+                    <td >Final Term Grade: </td> <td colspan="3"><strong>{{ data["final_grade"] }}%</strong></td>
+                </tr>
             </tbody>
         </table>
-
-        <p>Final Term Grade: <strong>{{ data["final_grade"] }}%</strong></p>
 
         <div class="footer">
             <p>Dear Parents:</p>
@@ -134,7 +161,7 @@
             </div>
         </div>
 
-        <p>Date: <strong>{{ data["date"] }}</strong></p>
+        <p style="text-align: center;">Date: <strong>{{ data["date"] }}</strong></p>
     </div>
 </body>
 </html>
