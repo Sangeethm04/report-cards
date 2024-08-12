@@ -1,14 +1,76 @@
 import shutil
 import pdfkit
 import pandas as pd
-from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for, flash
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 import os
 from datetime import datetime
+
+
+
+# from flask_sqlalchemy import SQLAlchemy
+# from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
+# from sqlalchemy import Integer, String, Text
+# from forms import RegisterForm, LoginForm
+
+
+
 
 app = Flask(__name__)
 
 file_path = 'Mid-Data.csv'
 df = pd.read_csv(file_path)
+
+# # Configure Flask-Login
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+# # CREATE DATABASE
+# class Base(DeclarativeBase):
+#     pass
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+# db = SQLAlchemy(model_class=Base)
+# db.init_app(app)
+
+
+# # Create a User table for all your registered users
+# class User(UserMixin, db.Model):
+#     __tablename__ = "users"
+#     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+#     email: Mapped[str] = mapped_column(String(100), unique=True)
+#     password: Mapped[str] = mapped_column(String(100))
+#     name: Mapped[str] = mapped_column(String(100))
+#     # This will act like a list of BlogPost objects attached to each User.
+#     # The "author" refers to the author property in the BlogPost class.
+#     posts = relationship("BlogPost", back_populates="author")
+#     # Parent relationship: "comment_author" refers to the comment_author property in the Comment class.
+#     comments = relationship("Comment", back_populates="comment_author")
+
+# with app.app_context():
+#     db.create_all()
+
+
+# @app.route('/login', methods=["GET", "POST"])
+# def login():
+#     form = LoginForm()
+#     if form.validate_on_submit():
+#         password = form.password.data
+#         result = db.session.execute(db.select(User).where(User.email == form.email.data))
+#         # Note, email in db is unique so will only have one result.
+#         user = result.scalar()
+#         # Email doesn't exist
+#         if not user:
+#             flash("That email does not exist, please try again.")
+#             return redirect(url_for('login'))
+#         # Password incorrect
+#         elif not check_password_hash(user.password, password):
+#             flash('Password incorrect, please try again.')
+#             return redirect(url_for('login'))
+#         else:
+#             login_user(user)
+#             return redirect(url_for('get_all_posts'))
+
+#     return render_template("login.html", form=form, current_user=current_user)
 
 # Convert DataFrame rows to dictionaries for easier access
 students_data = df.to_dict(orient='records')
