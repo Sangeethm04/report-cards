@@ -7,7 +7,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-file_path = 'Uploads/Mid-Data.csv'
+file_path = 'Mid-Data.csv'
 df = pd.read_csv(file_path)
 
 # Convert DataFrame rows to dictionaries for easier access
