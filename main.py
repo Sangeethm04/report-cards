@@ -8,76 +8,92 @@ from datetime import datetime
 
 
 
-# from flask_sqlalchemy import SQLAlchemy
-# from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-# from sqlalchemy import Integer, String, Text
-# from forms import RegisterForm, LoginForm
+from flask_bootstrap import Bootstrap
+from flask_ckeditor import CKEditor
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
+from flask_sqlalchemy import SQLAlchemy #Access sql through python
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import Integer, String
+from werkzeug.security import generate_password_hash, check_password_hash
+# Import your forms from the forms.py
+from forms import LoginForm
 
 
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+ckeditor = CKEditor(app)
+Bootstrap(app)
 
 file_path = 'Mid-Data.csv'
 df = pd.read_csv(file_path)
 
-# # Configure Flask-Login
-# login_manager = LoginManager()
-# login_manager.init_app(app)
+# Configure Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-# # CREATE DATABASE
-# class Base(DeclarativeBase):
-#     pass
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
-# db = SQLAlchemy(model_class=Base)
-# db.init_app(app)
+# CREATE DATABASE
+class Base(DeclarativeBase):
+    pass
 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", "sqlite:///posts.db")
+db = SQLAlchemy(model_class=Base)
+db.init_app(app)
 
-# # Create a User table for all your registered users
-# class User(UserMixin, db.Model):
-#     __tablename__ = "users"
-#     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-#     email: Mapped[str] = mapped_column(String(100), unique=True)
-#     password: Mapped[str] = mapped_column(String(100))
-#     name: Mapped[str] = mapped_column(String(100))
-#     # This will act like a list of BlogPost objects attached to each User.
-#     # The "author" refers to the author property in the BlogPost class.
-#     posts = relationship("BlogPost", back_populates="author")
-#     # Parent relationship: "comment_author" refers to the comment_author property in the Comment class.
-#     comments = relationship("Comment", back_populates="comment_author")
-
-# with app.app_context():
-#     db.create_all()
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get_or_404(User, user_id)
 
 
-# @app.route('/login', methods=["GET", "POST"])
-# def login():
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         password = form.password.data
-#         result = db.session.execute(db.select(User).where(User.email == form.email.data))
-#         # Note, email in db is unique so will only have one result.
-#         user = result.scalar()
-#         # Email doesn't exist
-#         if not user:
-#             flash("That email does not exist, please try again.")
-#             return redirect(url_for('login'))
-#         # Password incorrect
-#         elif not check_password_hash(user.password, password):
-#             flash('Password incorrect, please try again.')
-#             return redirect(url_for('login'))
-#         else:
-#             login_user(user)
-#             return redirect(url_for('get_all_posts'))
+# Create a User table for all your registered users
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True)
+    password: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(100))
 
-#     return render_template("login.html", form=form, current_user=current_user)
+with app.app_context():
+    db.create_all()
+
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        result = db.session.execute(db.select(User).where(User.email == form.email.data))
+        # Note, email in db is unique so will only have one result.
+        user = result.scalar()
+        # Email doesn't exist
+        if not user:
+            flash("That email does not exist, please try again.")
+            return redirect(url_for('login'))
+        # Password incorrect
+        elif password != user.password:
+            return redirect(url_for('login'))
+        else:
+            login_user(user)
+            return redirect(url_for('home'))
+
+    return render_template("login.html", form=form, current_user=current_user)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 # Convert DataFrame rows to dictionaries for easier access
 students_data = df.to_dict(orient='records')
 now = datetime.now()
-formatted_date = now.strftime("%m-%d-%y")
+formatted_date = now.strftime("%m-f%d-%y")
+
+login_manager.login_view = 'login'
 
 @app.route('/')
+@login_required
 def home():
     return render_template("index.html")
 
@@ -157,7 +173,21 @@ def download_file():
         # Serve the ZIP file
     return send_from_directory(os.getcwd(), 'reportcards.zip', as_attachment=True)
 
+@app.route('/downloadex')
+def download_example():
+    if not os.path.exists("Example"):
+            abort(404, description="Directory not found")
+
+        # Compress the directory into a ZIP file
+    shutil.make_archive('example', 'zip', "Example")
+        
+        # Serve the ZIP file
+    return send_from_directory(os.getcwd(), 'example.zip', as_attachment=True)
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
