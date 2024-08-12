@@ -102,7 +102,7 @@ def login():
             flash("That email does not exist, please try again.")
             return redirect(url_for('login'))
         # Password incorrect
-        elif password != user.password:
+        elif not check_password_hash(user.password, password):
             return redirect(url_for('login'))
         else:
             login_user(user)
