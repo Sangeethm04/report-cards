@@ -103,6 +103,7 @@ def login():
             return redirect(url_for('login'))
         # Password incorrect
         elif not check_password_hash(user.password, password):
+            flash("Incorrect Password, please try again.")
             return redirect(url_for('login'))
         else:
             login_user(user)
