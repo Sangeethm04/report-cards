@@ -1,7 +1,7 @@
 import shutil
 import pdfkit
 import pandas as pd
-from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for, flash
+from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for, flash, after_this_request
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 import os
 from datetime import datetime
@@ -22,7 +22,8 @@ from forms import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+#os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C06K56b"
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -203,7 +204,25 @@ def download_file():
     shutil.make_archive('reportcards', 'zip', "ReportCards")
         
         # Serve the ZIP file
-    return send_from_directory(os.getcwd(), 'reportcards.zip', as_attachment=True)
+    response =  send_from_directory(os.getcwd(), 'reportcards.zip', as_attachment=True)
+
+    @after_this_request
+    def remove_report_cards(response):
+        global file_path
+        for filename in os.listdir("ReportCards"):
+            file_paths = os.path.join("ReportCards", filename)
+            try:
+                if os.path.isfile(file_paths) and filename != "Thanks.txt":
+                    os.remove(file_paths)  # Remove the file
+            except Exception as e:
+                print(f'Failed to delete {file_paths}. Reason: {e}')
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        return response
+        
+
+    return response
+
 
 @app.route('/downloadex')
 def download_example():
