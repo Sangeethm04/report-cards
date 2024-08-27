@@ -2,7 +2,8 @@ import shutil
 import pdfkit
 import pandas as pd
 from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for, flash, after_this_request
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
+from flask_mail import Mail, Message
 import os
 from datetime import datetime
 
@@ -10,7 +11,6 @@ from datetime import datetime
 
 from flask_bootstrap import Bootstrap
 from flask_ckeditor import CKEditor
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy #Access sql through python
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String
@@ -22,8 +22,8 @@ from forms import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+#os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C06K56b"
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
