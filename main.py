@@ -4,6 +4,7 @@ import pandas as pd
 from flask import Flask, abort, redirect, render_template, request, send_from_directory, url_for, flash, after_this_request
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_mail import Mail, Message
+from sqlalchemy import text
 import os
 from datetime import datetime
 
@@ -48,6 +49,7 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'schery004@gmail.com'
 app.config['MAIL_PASSWORD'] = 'xbfcppyvwbrnxwnc'
+app.config['MAIL_DEFAULT_SENDER'] = 'schery004@gmail.com'
 
 mail = Mail(app)
 
@@ -73,6 +75,7 @@ with app.app_context():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
+        result = db.session.execute(text("Select email from users"))
 
         # Check if user email is already present in the database.
         result = db.session.execute(db.select(User).where(User.email == form.email.data))
@@ -131,7 +134,7 @@ def logout():
 # Convert DataFrame rows to dictionaries for easier access
 students_data = df.to_dict(orient='records')
 now = datetime.now()
-formatted_date = now.strftime("%m-f%d-%y")
+formatted_date = now.strftime("%m-%d-%y")
 
 login_manager.login_view = 'login'
 
@@ -189,7 +192,8 @@ def generate_pdf(name):
         print(f"PDF generated and saved at {pdf_path}")
 
         # Send an email if there's a parent email
-        parent_email = data["email"]
+        emails = data['email']
+        parent_email = [email.strip() for email in emails.split(",")]
         if parent_email:
             send_email(parent_email, pdf_path, data)
             print(f"Email sent to {parent_email}")
@@ -202,7 +206,7 @@ def send_email(to, pdf_path, data):
     body = f"Dear Parent,\n\nPlease find attached the report card for your child, {data['name']}.\n\nBest regards,\nSt. Thomas Syro NJ"
     msg = Message(
     subject=subject,
-    recipients=[to],
+    recipients=to,
     body=body
     )
     with app.open_resource(pdf_path) as card:
