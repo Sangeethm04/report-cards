@@ -42,6 +42,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", "sqlite:///post
 db = SQLAlchemy(model_class=Base)
 db.init_app(app)
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'schery004@gmail.com'
+app.config['MAIL_PASSWORD'] = 'xbfcppyvwbrnxwnc'
+
+mail = Mail(app)
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db.get_or_404(User, user_id)
@@ -167,7 +177,8 @@ def generate_pdf(name):
         "teacher_comments": student_data['Teacher Comments'],
         "teacher1_name": "sangeeth",
         "teacher2_name": "menachery",
-        "date": formatted_date
+        "date": formatted_date,
+        "email": student_data["Parent Email"]
     }
 
     # PDF path to save
@@ -176,8 +187,28 @@ def generate_pdf(name):
         rendered = render_template("midCard.html", data=data)
         pdfkit.from_string(rendered, pdf_path)
         print(f"PDF generated and saved at {pdf_path}")
+
+        # Send an email if there's a parent email
+        parent_email = data["email"]
+        if parent_email:
+            send_email(parent_email, pdf_path, data)
+            print(f"Email sent to {parent_email}")
+
     except Exception as e:
         print(f"PDF generation failed: {e}")
+
+def send_email(to, pdf_path, data):
+    subject = f"Report Card for {data['name']}"
+    body = f"Dear Parent,\n\nPlease find attached the report card for your child, {data['name']}.\n\nBest regards,\nSt. Thomas Syro NJ"
+    msg = Message(
+    subject=subject,
+    recipients=[to],
+    body=body
+    )
+    with app.open_resource(pdf_path) as card:
+        msg.attach(f"{data['name']} Report Card.pdf", "application/pdf", card.read())
+    mail.send(msg)
+
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -234,6 +265,9 @@ def download_example():
         
         # Serve the ZIP file
     return send_from_directory(os.getcwd(), 'example.zip', as_attachment=True)
+
+
+
 
 @app.route('/about')
 def about():
