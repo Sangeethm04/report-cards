@@ -23,8 +23,8 @@ from forms import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
-#os.environ.get('FLASK_KEY')
-app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C06K56b"
+
+app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -47,8 +47,8 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'schery004@gmail.com'
-app.config['MAIL_PASSWORD'] = 'xbfcppyvwbrnxwnc'
+app.config['MAIL_USERNAME'] = os.environ.get('mail_account')
+app.config['MAIL_PASSWORD'] = os.environ.get('mail_pass')
 app.config['MAIL_DEFAULT_SENDER'] = 'schery004@gmail.com'
 
 mail = Mail(app)
