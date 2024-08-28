@@ -107,6 +107,10 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        result = db.session.execute(text("select email from users"))
+        for email in result:
+            print(email)
+            
         password = form.password.data
         result = db.session.execute(db.select(User).where(User.email == form.email.data))
         # Note, email in db is unique so will only have one result.
