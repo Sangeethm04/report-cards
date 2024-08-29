@@ -23,8 +23,8 @@ from forms import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+#os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C06K56b"
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
@@ -182,8 +182,9 @@ def generate_pdf(name):
         # "diary_total": student_data['Diary Total'],
         "final_grade": student_data['Final Grade'],
         "teacher_comments": student_data['Teacher Comments'],
-        "teacher1_name": "sangeeth",
-        "teacher2_name": "menachery",
+        "teacher1_name": student_data['Teacher1Name'],
+        "teacher2_name": student_data['Teacher2Name'],
+        "grade":student_data["Grade"],
         "date": formatted_date,
         "email": student_data["Parent Email"]
     }
@@ -206,8 +207,8 @@ def generate_pdf(name):
         print(f"PDF generation failed: {e}")
 
 def send_email(to, pdf_path, data):
-    subject = f"Report Card for {data['name']}"
-    body = f"Dear Parent,\n\nPlease find attached the report card for your child, {data['name']}.\n\nBest regards,\nSt. Thomas Syro NJ"
+    subject = f"CCD Report Card for {data['name']}"
+    body = f"Dear Parent,\n\nPlease find attached the report card for your child, {data['name']}.\n\nBest regards,\nFaith Formation Team\nSt. Thomas Syro Malabar Forane Catholic Church"
     msg = Message(
     subject=subject,
     recipients=to,
