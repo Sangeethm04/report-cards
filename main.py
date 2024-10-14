@@ -23,7 +23,8 @@ from forms import LoginForm, RegisterForm
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('FLASK_KEY')
+#os.environ.get('FLASK_KEY')
+app.config['SECRET_KEY'] = "8BYkEfBA6O6donzWlSihBXox7C06K56b"
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
