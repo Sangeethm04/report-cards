@@ -102,6 +102,9 @@ def register():
         return redirect(url_for("home"))
     return render_template("register.html", form=form, current_user=current_user)
 
+@app.route('/sitemap.xml', methods=["GET"])
+def sitemap():
+    return send_from_directory('static', 'sitemap.xml')
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
