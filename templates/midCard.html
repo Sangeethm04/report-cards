@@ -33,18 +33,18 @@
             text-align: center;
         }
         .report-card .score-column {
-            width: 30%; /* Increase the width of the score column */
+            width: 30%;
         }
         .report-card .comments-cell {
-            width: 30%; /* Reduce the width of the comments cell */
+            width: 30%;
             text-align: left;
             vertical-align: top;
         }
         .report-card .title-column {
-            width: 30%; /* Adjust the size of the title column */
+            width: 30%;
         }
         .footer p {
-            margin: 5px 0 5 5;
+            margin: 5px 0 5px 5px;
         }
         .teacher-signature {
             margin-top: 40px;
@@ -52,20 +52,19 @@
         }
         .teacher-signature div {
             display: inline-block;
-            width: 45%; /* Adjust width to control spacing */
+            width: 45%;
             text-align: center;
             vertical-align: top;
         }
         .teacher-signature div:not(:last-child) {
-            margin-right: 5%; /* Add spacing between the names */
+            margin-right: 5%;
         }
         .final-grade {
             font-size: 24px;
             font-weight: bold;
             text-align: center;
-            background-color: #f9f9f9; /* Optional: Add a background color */
+            background-color: #f9f9f9; /* Optional: Add background color */
         }
-
         .header .images {
             display: flex;
             justify-content: space-between;
@@ -80,11 +79,11 @@
 <body>
     <div class="header">
         <div class="images">
-            <img src="https://i.pinimg.com/originals/a3/45/a3/a345a399e507a81521804a3994386098.png" alt="Left Image"> <!-- Replace with the actual path to your left image --> </div>
-            <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
-       
+            <img src="https://i.pinimg.com/originals/a3/45/a3/a345a399e507a81521804a3994386098.png" alt="Left Image">
+        </div>
+        <h1>St. Thomas Syro-Malabar Catholic Forane Church</h1>
         <p>510 Elizabeth Avenue, Somerset, NJ</p>
-        <p>Year End Report Card: CCD Grade {{data["grade"]}}</p>
+        <p>Year End Report Card: CCD Grade {{ data["grade"] }}</p>
         <p>School Year: 2024-2025</p>
     </div>
 
@@ -95,50 +94,45 @@
             <thead>
                 <tr>
                     <th class="title-column">Items</th>
-                    <th class="score-column">Mid Term Score</th>
+                    <th class="score-column">Score</th>
                     <th class="comments-cell">Teacher's Comments</th>
                 </tr>
             </thead>
             <tbody>
+                {% for category in data["categories"] %}
                 <tr>
-                    <td class="title-column">Mid Term Exam</td>
-                    <td class="score-column">{{ data["mid_term_exam"] }}</td>
-                    <td class="comments-cell" rowspan="6">{{ data["teacher_comments"] }}</td>
+                    <!-- Category title -->
+                    <td class="title-column">
+                        {{ category.title }}
+                    </td>
+                    <!-- Score -->
+                    <td class="score-column">
+                        {{ category.score }}
+                    </td>
+                    <!-- Teacher's comments only on the first row, with a rowspan across all categories -->
+                    {% if loop.first %}
+                        <td class="comments-cell" rowspan="{{ data["categories"]|length }}">
+                            {{ data["teacher_comments"] }}
+                        </td>
+                    {% endif %}
                 </tr>
-                <tr>
-                    <td class="title-column">Behavior<br><div style="font-size:xx-small">(This includes CCD<br>
-                        attendance, punctuality,<br>
-                        sacramental life, prayer life,<br>
-                        involvement in the CML and<br>
-                        parish activities, volunteer<br>
-                        work and readiness to help<br>
-                        others)</div></td>
-                    <td class="score-column">{{ data["behavior_mid"] }}</td>
-                </tr>
-                <tr>
-                    <td class="title-column">Quiz<br><div style="font-size:xx-small">(This includes Bible Quizzes<br>
-                        and/or Chapter Quizzes<br>
-                        conducted in class)</div> </td>
-                    <td class="score-column">{{ data["quiz_mid"] }}</td>
-                </tr>
-                <tr>
-                    <td class="title-column">Homework</td>
-                    <td class="score-column">{{ data["homework_mid"] }}</td>
-                </tr>
-                <tr>
-                    <td class="title-column">Student Diary</td>
-                    <td class="score-column">{{ data["diary_mid"] }}</td>
-                </tr>
+                {% endfor %}
+
+                <!-- Final Grade Row -->
                 <tr class="final-grade">
-                    <td>Mid Term Grade: </td> 
-                    <td class="score-column" colspan="1"><strong>{{ data["final_grade"] }}%</strong></td>
+                    <td>Final Grade:</td>
+                    <td class="score-column" colspan="2"><strong>{{ data["final_grade"] }}%</strong></td>
                 </tr>
             </tbody>
         </table>
 
         <div class="footer">
             <p><strong>Dear Parents:</strong></p>
-            <p>The purpose of this report card is to provide awareness about your child's progress in our faith formation classes. You may discuss your child's progress in more detail with the teachers during the Parent-Teacher one on one conference as needed.</p>
+            <p>
+                The purpose of this report card is to provide awareness about your child's progress
+                in our faith formation classes. You may discuss your child's progress in more detail
+                with the teachers during the Parent-Teacher one on one conference as needed.
+            </p>
         </div>
 
         <div class="teacher-signature">

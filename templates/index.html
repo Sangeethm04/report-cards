@@ -20,14 +20,28 @@
 
 <body>
     <div style="padding:10px">
-    <h1>Step 1: Download Example Excel Sheet</h1>
-    <a class="btn btn-secondary" href="/downloadex">Download Example Spreadsheet</a>
-    <h1>Step 2: Upload Excel Document as csv</h1>
+    <a class="btn btn-secondary" target="_blank" href="https://docs.google.com/spreadsheets/d/16w-mCg9begLsheWumjymKBvjWDWqWVyxbmZmNkOoD2w/edit?usp=sharing">Step 1: View Example Spreadsheet</a>
+    <p>Step 2: Format Your Spreadsheet to Look close to mine-only change required grading cateogies do not change these fixed columns ("First Name","Last Name",
+      "Parent Email",
+      "Teacher Comments",
+      "Teacher1Name",
+      "Teacher2Name",
+      "Grade",
+      "Final Grade",)
+    
+    </p>
+    <p>Step 3: Download your spreadsheet as csv by going to file > download > csv 
+    </p>
+    <p><b>Warning</b> make sure this works before adding emails in the email column which would be auto sent to parents
+    </p>
+      
+    
+    <h1>Step 4: Upload the CSV</h1>
     <form action="/upload" method="POST" enctype="multipart/form-data">
         <input class="btn btn-success" type="file" name="file">
         <input class="btn btn-primary" type="submit" value="Upload">
     </form>
-    <h1>Step 3: Download Report Cards</h1>
+    <h1>Step 5: Download Report Cards Folder</h1>
     <a class="btn btn-primary" href="/download">Download Report Cards</a>
 </div>
 </body>

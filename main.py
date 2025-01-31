@@ -157,49 +157,67 @@ def convert_html_to_pdf():
 
 @app.route('/generate_pdf/<name>')
 def generate_pdf(name):
-    # Find the student data by namet
+    # 1) Find the student data by name
     try:
         student_data = next(item for item in students_data if item['First Name'] == name)
     except StopIteration:
         abort(404, description="Student not found")
 
+    # 2) Define which columns are *excluded* from the dynamic categories
+    #    (since these are "fixed" data points like names, teacher comments, etc.)
+    EXCLUDED_COLUMNS = [
+        "First Name",
+        "Last Name",
+        "Parent Email",
+        "Teacher Comments",
+        "Teacher1Name",
+        "Teacher2Name",
+        "Grade",
+        "Final Grade",
+        # Add more here if your CSV has columns
+        # that should NOT be treated as grading categories
+    ]
 
+    # 3) Build a list of categories from columns that are not excluded
+    category_columns = [col for col in student_data.keys() if col not in EXCLUDED_COLUMNS]
 
-    # Extract relevant data from the student_data
+    # Example: if your CSV columns are:
+    #   [ "First Name", "Last Name", "Mid-Term Exam", "Behavior Mid", "Quiz Mid", 
+    #     "Homework Mid", "Diary Mid", "Curve", "Final Grade", "Teacher Comments", 
+    #     "Parent Email", "Grade", "Teacher1Name", "Teacher2Name" ]
+    #
+    # then category_columns might end up being:
+    #   [ "Mid-Term Exam", "Behavior Mid", "Quiz Mid", "Homework Mid", "Diary Mid", "Curve" ]
+
+    # 4) Build a list/dict of categories for the template
+    categories = []
+    for col in category_columns:
+        categories.append({
+            "title": col,
+            "score": student_data[col]
+        })
+
+    # 5) Construct your main data dictionary for the template
     data = {
         "name": f"{student_data['First Name']} {student_data['Last Name']}",
-        "mid_term_exam": student_data['Mid-Term Exam'],
-        # "exam_final": student_data['Final Exam'],
-        # "exam_total": student_data['Exam Total'],
-        "behavior_mid": student_data['Behavior Mid'],
-        # "behavior_final": student_data['Behavior Final'],
-        # "behavior_total": student_data['Behavior Total'],
-        "quiz_mid": student_data['Quiz Mid'],
-        # "quiz_final": student_data['Quiz Final'],
-        # "quiz_total": student_data['Quiz Total'],
-        "homework_mid": student_data['Homework Mid'],
-        # "homework_final": student_data['Homework Final'],
-        # "homework_total": student_data['Homework Total'],
-        "diary_mid": student_data['Diary Mid'],
-        # "diary_final": student_data['Diary Final'],
-        # "diary_total": student_data['Diary Total'],
         "final_grade": student_data['Final Grade'],
         "teacher_comments": student_data['Teacher Comments'],
         "teacher1_name": student_data['Teacher1Name'],
         "teacher2_name": student_data['Teacher2Name'],
-        "grade":student_data["Grade"],
+        "grade": student_data["Grade"],
         "date": formatted_date,
-        "email": student_data["Parent Email"]
+        "email": student_data["Parent Email"],
+        "categories": categories    # <== pass the dynamic list here
     }
 
-    # PDF path to save
+    # 6) Render the template and convert to PDF
     pdf_path = f'ReportCards/{name} Report Card.pdf'
     try:
         rendered = render_template("midCard.html", data=data)
         pdfkit.from_string(rendered, pdf_path)
         print(f"PDF generated and saved at {pdf_path}")
 
-        # Send an email if there's a parent email
+        # 7) If there's a parent email, send the PDF
         emails = data['email']
         parent_email = [email.strip() for email in emails.split(",")]
         if parent_email:
@@ -209,6 +227,7 @@ def generate_pdf(name):
     except Exception as e:
         print(f"PDF generation failed: {e}")
 
+    return f"PDF for {name} generated."
 def send_email(to, pdf_path, data):
     subject = f"CCD Report Card for {data['name']}"
     body = f"Dear Parent,\n\nPlease find attached the report card for your child, {data['name']}.\n\nBest regards,\nFaith Formation Team\nSt. Thomas Syro Malabar Forane Catholic Church"
